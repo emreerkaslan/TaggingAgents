@@ -6,10 +6,12 @@ public class AgentManager : MonoBehaviour
 {
     public GameObject[] agents;
 
+    public GameObject[] boss;
     private void Awake()
     {
         int totalTaggers = 0;
         agents = GameObject.FindGameObjectsWithTag("Agent");
+        boss = GameObject.FindGameObjectsWithTag("Boss");
         print("started assigning");
         while (totalTaggers < 2)
         {
@@ -34,6 +36,7 @@ public class AgentManager : MonoBehaviour
     private void FixedUpdate()
     {
         int totalRunners = 0;
+        int  bossCount = 0;
         foreach (GameObject agent in agents)
         {
             Agent enemy = agent.GetComponent<Agent>();
@@ -46,16 +49,15 @@ public class AgentManager : MonoBehaviour
             }
         }
 
-        if (totalRunners <= 2)
+        if (totalRunners == 1)
         {
-            foreach (GameObject agent in agents)
+            foreach (var item in boss)
             {
-                Agent enemy = agent.GetComponent<Agent>();
-                if (enemy != null)
-                {
-                    enemy.agentMode = !enemy.agentMode;
-                }
-            }
+                item.SetActive(true);
+            }   
         }
+      
     }
+ 
+
 }

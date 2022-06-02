@@ -6,25 +6,35 @@ using UnityEngine.AI;
 public class Agent : MonoBehaviour
 {
     public GameObject[] agents;
+    public GameObject[] boss;
     public bool agentMode;
+    public bool isBoss;
     public Transform goal;
     private Component script;
     private Rigidbody rb;
     public Material runnerMaterial;
     public Material taggerMaterial;
+    public Material bossMaterial;
 
     void Start()
     {
         runnerMaterial = Resources.Load("Materials/blue", typeof(Material)) as Material;
         taggerMaterial = Resources.Load("Materials/red", typeof(Material)) as Material;
+        bossMaterial =   Resources.Load("Materials/Materials/pacman", typeof(Material)) as Material;
         agents = GameObject.FindGameObjectsWithTag("Agent");
+        boss = GameObject.FindGameObjectsWithTag("Boss");
+
         rb = this.GetComponent<Rigidbody>();
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
         Renderer rend = GetComponent<Renderer>();
         if (rend != null)
         {
-            if (agentMode)
+            if(isBoss && agentMode){
+                rend.material = bossMaterial;
+               
+            }
+            else if (!isBoss && agentMode)
             {
                 rend.material = taggerMaterial;
             }
@@ -34,10 +44,15 @@ public class Agent : MonoBehaviour
             }
         }
 
-        if(findClosestEnemy() != null)
+        if(findClosestEnemy() != null )
         {
             agent.destination = findClosestEnemy().position;
         }
+
+        foreach(var item in boss){
+         item.SetActive(false);
+        }
+
     }
 
     private void Update()
@@ -48,9 +63,11 @@ public class Agent : MonoBehaviour
     private void FixedUpdate()
     {
         NavMeshAgent thisAgent = GetComponent<NavMeshAgent>();
-        if (agentMode)
+          print(isBoss);
+        if (agentMode && !isBoss)
         {
             //tagging
+            print("tagged");
             Renderer rend = GetComponent<Renderer>();
             if (rend != null)
             {
@@ -58,8 +75,21 @@ public class Agent : MonoBehaviour
             }
             thisAgent.destination = findClosestEnemy().position;
         }
+        else if (agentMode && isBoss)
+        {
+            //boss
+            print("boss");
+            Renderer rend = GetComponent<Renderer>();
+            if (rend != null)
+            {
+                rend.material = bossMaterial;
+            }
+
+            thisAgent.destination = findClosestEnemy().position;
+        }
         else
         {
+            print("runner");
             //running
             Renderer rend = GetComponent<Renderer>();
             if (rend != null)
@@ -82,14 +112,17 @@ public class Agent : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (agentMode && collision.gameObject.tag == "Agent" && collision.gameObject.GetComponent<Agent>() != null)
-        {
             Agent otherAgent = collision.gameObject.GetComponent<Agent>();
-            if (!otherAgent.agentMode)
-            {
-                otherAgent.agentMode = true;
-            }
+
+        if(agentMode && otherAgent.agentMode && !otherAgent.isBoss){
+            print("boss contacted runner");
+            otherAgent.agentMode = false;
         }
+        if(agentMode && !isBoss && !otherAgent.agentMode){
+               print("runner contacted tagged");
+            otherAgent.agentMode = true;
+        }
+
     }
 
     public void setAgentMode(bool mode)
@@ -111,8 +144,16 @@ public class Agent : MonoBehaviour
             Agent enemy = agent.GetComponent<Agent>();
             if(enemy != null)
             {
-                if (enemy.agentMode != this.agentMode)
+                if (enemy.agentMode != this.agentMode && !this.isBoss)
                 {
+                    Transform location = enemy.transform;
+                    float distance = Mathf.Sqrt(Mathf.Pow(location.position.x - transform.position.x, 2f) + Mathf.Pow(location.position.z - transform.position.z, 2f));
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        tempGoal = enemy.transform;
+                    }
+                }else if(this.isBoss){
                     Transform location = enemy.transform;
                     float distance = Mathf.Sqrt(Mathf.Pow(location.position.x - transform.position.x, 2f) + Mathf.Pow(location.position.z - transform.position.z, 2f));
                     if (distance < closestDistance)
