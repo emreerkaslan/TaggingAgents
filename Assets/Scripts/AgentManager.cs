@@ -11,7 +11,7 @@ public class AgentManager : MonoBehaviour
         int totalTaggers = 0;
         agents = GameObject.FindGameObjectsWithTag("Agent");
         print("started assigning");
-        while (totalTaggers < 2)
+        while (totalTaggers < 10)
         {
             print("total" + totalTaggers.ToString());
             print("started loop");
@@ -46,7 +46,7 @@ public class AgentManager : MonoBehaviour
             }
         }
 
-        if (totalRunners <= 2)
+        if (totalRunners <= 10)
         {
             foreach (GameObject agent in agents)
             {
