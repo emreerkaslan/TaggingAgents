@@ -112,15 +112,17 @@ public class Agent : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-            Agent otherAgent = collision.gameObject.GetComponent<Agent>();
+        Agent otherAgent = collision.gameObject.GetComponent<Agent>();
 
-        if(agentMode && otherAgent.agentMode && !otherAgent.isBoss){
-            print("boss contacted runner");
-            otherAgent.agentMode = false;
-        }
-        if(agentMode && !isBoss && !otherAgent.agentMode){
+        if(otherAgent != null){
+            if(isBoss && otherAgent.agentMode){
+                print("boss contacted runner");
+                otherAgent.agentMode = false;
+            }
+            if(agentMode && !isBoss && !otherAgent.agentMode){
                print("runner contacted tagged");
-            otherAgent.agentMode = true;
+                otherAgent.agentMode = true;
+            }
         }
 
     }
