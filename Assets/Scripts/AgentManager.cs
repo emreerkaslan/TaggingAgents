@@ -5,33 +5,40 @@ using UnityEngine;
 public class AgentManager : MonoBehaviour
 {
     public GameObject[] agents;
-
+    public int agentCount = 10;
+    public int runnerPercentage = 25;
+    public float distance = 10;
     private void Awake()
     {
+        
         int totalTaggers = 0;
-        agents = GameObject.FindGameObjectsWithTag("Agent");
-        print("started assigning");
-        while (totalTaggers < 2)
-        {
-            print("total" + totalTaggers.ToString());
-            print("started loop");
-            int rnd = Random.Range(0, agents.Length - 1);
-            print("random" + rnd.ToString());
-            Agent agent = agents[rnd].GetComponent<Agent>();
-            if (agent != null)
-            {
-                print("agent found");
-                if (agent.agentMode != true)
-                {
-                    print("created agent");
-                    agent.agentMode = true;
-                    totalTaggers = totalTaggers + 1;
-                }
-            }
+        var agent = GameObject.FindWithTag("Agent");
+        var ground = GameObject.FindWithTag("Ground");
+
+        if(ground != null){
+            distance = ground.transform.localScale.x;
+        }
+        var position = ReturnRandomLocationInPlayableArea(new Vector3(1,0,-20),distance,1);
+
+        int runnerCount = (runnerPercentage*agentCount)/100;
+
+        for(int k = 0; k < 4;k++){
+      
+            Agent duplicate = Instantiate(agent,position,new Quaternion(0,0,0,0)).GetComponent<Agent>();
+            print("runner");
+            duplicate.agentMode = true;
+        }
+        agent.GetComponent<Agent>().agentMode = false;
+        for(int i = 0; i< 7; i++)
+        { 
+            agent.GetComponent<Agent>().agentMode = false;  
+            print("tagger");
+            Agent duplicate = Instantiate(agent,position,new Quaternion(0,0,0,0)).GetComponent<Agent>();
+           
         }
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate() 
     {
         int totalRunners = 0;
         foreach (GameObject agent in agents)
@@ -57,5 +64,17 @@ public class AgentManager : MonoBehaviour
                 }
             }
         }
+    }
+     private static Vector3 ReturnRandomLocationInPlayableArea(Vector3 origin, float distance, int layermask)
+    {
+        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * distance;
+
+        randomDirection += origin;
+
+        UnityEngine.AI.NavMeshHit navHit;
+
+        UnityEngine.AI.NavMesh.SamplePosition(randomDirection, out navHit, distance, layermask);
+        
+        return navHit.position;
     }
 }
