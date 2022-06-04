@@ -6,36 +6,31 @@ public class AgentManager : MonoBehaviour
 {
     public GameObject[] agents;
     public int agentCount = 10;
-    public int runnerPercentage = 25;
+    public int runnerPercentage = 10;
+    public int runnerCount = 10;
     public float distance = 10;
+    public GameObject agentPrefab;
     private void Awake()
-    {
-        
-        int totalTaggers = 0;
-        var agent = GameObject.FindWithTag("Agent");
+    {        
         var ground = GameObject.FindWithTag("Ground");
 
         if(ground != null){
             distance = ground.transform.localScale.x;
         }
+
         var position = ReturnRandomLocationInPlayableArea(new Vector3(1,0,-20),distance,1);
 
-        int runnerCount = (runnerPercentage*agentCount)/100;
+        runnerCount = (runnerPercentage*agentCount)/100;
 
-        for(int k = 0; k < 4;k++){
-      
-            Agent duplicate = Instantiate(agent,position,new Quaternion(0,0,0,0)).GetComponent<Agent>();
-            print("runner");
-            duplicate.agentMode = true;
+        for(int k = 0; k < agentCount-1;k++){
+            GameObject newAgent = Instantiate(agentPrefab, position, Quaternion.identity);
+            Agent newAgentScript = newAgent.GetComponent<Agent>();
+            if (newAgentScript != null)
+            {
+                newAgentScript.agentMode = true;
+            }
         }
-        agent.GetComponent<Agent>().agentMode = false;
-        for(int i = 0; i< 7; i++)
-        { 
-            agent.GetComponent<Agent>().agentMode = false;  
-            print("tagger");
-            Agent duplicate = Instantiate(agent,position,new Quaternion(0,0,0,0)).GetComponent<Agent>();
-           
-        }
+        agents = GameObject.FindGameObjectsWithTag("Agent");
     }
 
     private void FixedUpdate() 
@@ -53,7 +48,7 @@ public class AgentManager : MonoBehaviour
             }
         }
 
-        if (totalRunners <= 2)
+        if (totalRunners <= runnerCount)
         {
             foreach (GameObject agent in agents)
             {
@@ -65,7 +60,8 @@ public class AgentManager : MonoBehaviour
             }
         }
     }
-     private static Vector3 ReturnRandomLocationInPlayableArea(Vector3 origin, float distance, int layermask)
+
+    private static Vector3 ReturnRandomLocationInPlayableArea(Vector3 origin, float distance, int layermask)
     {
         Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * distance;
 
