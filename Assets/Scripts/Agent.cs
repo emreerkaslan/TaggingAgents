@@ -12,7 +12,7 @@ public class Agent : MonoBehaviour
     private Rigidbody rb;
     public Material runnerMaterial;
     public Material taggerMaterial;
-
+    int fpsCount  = 0;
     void Start()
     {
         runnerMaterial = Resources.Load("Materials/blue", typeof(Material)) as Material;
@@ -47,6 +47,9 @@ public class Agent : MonoBehaviour
 
     private void FixedUpdate()
     {
+    
+        if(fpsCount == 5){
+
         NavMeshAgent thisAgent = GetComponent<NavMeshAgent>();
         if (agentMode)
         {
@@ -78,6 +81,9 @@ public class Agent : MonoBehaviour
                 thisAgent.destination = ReturnRandomLocationInPlayableArea(thisAgent.transform.position, 5, -1);
             }
         }
+        fpsCount = 0;
+        }
+        fpsCount++;
     }
 
     void OnCollisionEnter(Collision collision)
