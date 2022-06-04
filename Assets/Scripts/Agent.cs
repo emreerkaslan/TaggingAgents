@@ -48,7 +48,7 @@ public class Agent : MonoBehaviour
     private void FixedUpdate()
     {
     
-        if(fpsCount == 5){
+        if(fpsCount == 50){
 
         NavMeshAgent thisAgent = GetComponent<NavMeshAgent>();
         if (agentMode)
