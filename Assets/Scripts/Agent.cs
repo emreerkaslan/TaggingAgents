@@ -8,6 +8,7 @@ public class Agent : MonoBehaviour
     public GameObject[] agents;
     public bool agentMode;
     public Transform goal;
+    private int fpsCount;
     private Component script;
     private Rigidbody rb;
     public Material runnerMaterial;
@@ -15,6 +16,7 @@ public class Agent : MonoBehaviour
 
     void Start()
     {
+        fpsCount = Random.Range(0,7);
         runnerMaterial = Resources.Load("Materials/blue", typeof(Material)) as Material;
         taggerMaterial = Resources.Load("Materials/red", typeof(Material)) as Material;
         agents = GameObject.FindGameObjectsWithTag("Agent");
@@ -47,6 +49,8 @@ public class Agent : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(fpsCount == 6){
+            
         NavMeshAgent thisAgent = GetComponent<NavMeshAgent>();
         if (agentMode)
         {
@@ -77,7 +81,11 @@ public class Agent : MonoBehaviour
             {
                 thisAgent.destination = ReturnRandomLocationInPlayableArea(thisAgent.transform.position, 5, -1);
             }
+       
         }
+        fpsCount = 0;
+        }
+        fpsCount++;
     }
 
     void OnCollisionEnter(Collision collision)

@@ -7,8 +7,8 @@ public class AgentManager : MonoBehaviour
     public GameObject[] agents;
     public int agentCount = 10;
     public int runnerPercentage = 10;
-    public int runnerCount = 10;
-    public float distance = 10;
+    private int runnerCount =0;
+    private float distance = 10;
     public GameObject agentPrefab;
     private void Awake()
     {        
