@@ -16,7 +16,7 @@ public class Agent : MonoBehaviour
 
     void Start()
     {
-        fpsCount = Random.Range(0,7);
+        fpsCount = Random.Range(0,7);//Random Interval - Static Objects
         runnerMaterial = Resources.Load("Materials/blue", typeof(Material)) as Material;
         taggerMaterial = Resources.Load("Materials/red", typeof(Material)) as Material;
         agents = GameObject.FindGameObjectsWithTag("Agent");
@@ -34,7 +34,7 @@ public class Agent : MonoBehaviour
             {
                 rend.material = runnerMaterial;
             }
-        }
+        } 
 
         if(findClosestEnemy() != null)
         {
