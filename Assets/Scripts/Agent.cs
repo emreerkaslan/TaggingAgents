@@ -7,16 +7,37 @@ public class Agent : MonoBehaviour
 {
     public GameObject[] agents;
     public bool agentMode;
+    public bool randomization = false;
+    public int calculationInterval = 1;
     public Transform goal;
     private int fpsCount;
     private Component script;
     private Rigidbody rb;
     public Material runnerMaterial;
     public Material taggerMaterial;
+    public GameObject manager;
+
+    private void Awake()
+    {
+        manager = GameObject.FindGameObjectsWithTag("AgentManager")[0];
+        if (manager.GetComponent<AgentManager>() != null)
+        {
+            randomization = manager.GetComponent<AgentManager>().randomization;
+            calculationInterval = manager.GetComponent<AgentManager>().calculationInterval;
+        }
+    }
 
     void Start()
     {
-        fpsCount = Random.Range(0,7);//Random Interval - Static Objects
+        if (randomization)
+        {
+            fpsCount = Random.Range(0, calculationInterval);//Random Interval - Static Objects
+        }
+        else
+        {
+            fpsCount = 1;
+        }
+       
         runnerMaterial = Resources.Load("Materials/blue", typeof(Material)) as Material;
         taggerMaterial = Resources.Load("Materials/red", typeof(Material)) as Material;
         agents = GameObject.FindGameObjectsWithTag("Agent");
@@ -49,7 +70,7 @@ public class Agent : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(fpsCount == 6){
+        if(fpsCount == calculationInterval){
             
         NavMeshAgent thisAgent = GetComponent<NavMeshAgent>();
         if (agentMode)

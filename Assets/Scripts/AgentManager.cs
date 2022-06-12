@@ -7,6 +7,8 @@ public class AgentManager : MonoBehaviour
     public GameObject[] agents;
     public int agentCount = 10;
     public int runnerPercentage = 10;
+    public bool randomization = false;
+    public int calculationInterval = 1;
     private int runnerCount =0;
     private float distance = 10;
     public GameObject agentPrefab;
